@@ -53,5 +53,5 @@ class mzitu():
         content = requests.get(url, headers=headers)
         return content
 
-Mzitu = mzitu() ##实例化
+Mzitu = mzitu() #
 Mzitu.all_url('http://www.mzitu.com/all') ##给函数all_url传入参数  你可以当作启动爬虫（就是入口）
