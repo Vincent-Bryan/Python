@@ -8,13 +8,15 @@ class Nude(object):
 
     Skin = namedtuple("Skin", "id skin region x y")
 
-    def __init__(self, path_or_image):
+    def __init__(self, path_or_image):#判断是否为path或image
         if isinstance(path_or_image, Image.Image):
             self.image = path_or_image
         elif isinstance(path_or_image, str):
             self.image = Image.open(path_or_image)
-
+        
+        #获得图片的所有颜色通道
         bands = self.image.getbands()
+        #若其为单通道图片，即灰度图,则将其转换为RGB图
         if len(bands) == 1:
             new_img = Image.new("RGB", self.image.size)
             new_img.paste(self.image)
@@ -32,14 +34,26 @@ class Nude(object):
         self.width, self.height = self.image.size
         self.total_pixels = self.width * self.height
 
+    """
+    基于最大宽高按比例重设图片大小，
+    注意：这可能影响检测算法的结果
+    如果没有变化返回 0
+    原宽度大于 maxwidth 返回 1
+    原高度大于 maxheight 返回 2
+    原宽高大于 maxwidth, maxheight 返回 3
+    maxwidth - 图片最大宽度
+    maxheight - 图片最大高度
+    传递参数时都可以设置为 False 来忽略
+    """
     def resize(self, maxwidth=1000, maxheight=1000):
         ret = 0
         if maxwidth:
             if self.width > maxwidth:
                 wpercent = (maxwidth / self.width)
                 hsize = int((self.height * wpercent))
-                fname = self.image.filename
+                fname = self.image
                 self.image = self.image.resize((maxwidth, hsize), Image.LANCZOS)
+                # Image.LANCZOS 是重采样滤波器，用于抗锯齿
                 self.image.filename = fname
                 self.width, self.height = self.image.size
                 self.total_pixels = self.width * self.height
@@ -70,7 +84,7 @@ class Nude(object):
                 self.skin_map.append(self.Skin(_id, isSkin, None, x, y))
                 if not isSkin:
                     continue
-
+ 
                 check_indexes = [_id - 2,
                                  _id - self.width - 2,  
                                  _id - self.width - 1, 
@@ -237,8 +251,8 @@ class Nude(object):
         if _max == r:
             if diff == 0:
                 h = sys.maxsize
-            else:
-                h = (g - b) / diff
+            else：
+                h = （(g - b) / diff）
         elif _max == g:
             h = 2 + ((g - r) / diff)
         else:
