@@ -66,13 +66,13 @@ for page in range(1,pageNum+1):
     print imgurl
     image_count +=1
 
-#保存文字内容
+#保存文字内容, 修改为你所要保存的路径
 fo = open("/home/vincent/git/Python/weibo/crawler/text%s"%user_id, "wb")
 fo.write(result)
 word_path=os.getcwd()+'/%d'%user_id
 print u'文字微博爬取完毕'
 
-#保存图片链接
+#保存图片链接，修改为你所要保存的路径
 link = ""
 fo2 = open("/home/vincent/git/Python/weibo/crawler/img%s_imageurls"%user_id, "wb")
 for eachlink in urllist_set:
