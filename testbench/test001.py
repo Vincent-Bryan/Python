@@ -5,12 +5,14 @@ class Rectangle(object):
 		self.width = width
 		self.height = height
 	def __del__(self):
-		# print("end")
+		print("end")
 
 	def get_width(self):
-		print (self.width)
+		print(self.width)
+
 	def get_height(self):
-		print (self.height)
+		print(self.height)
+
 	def get_area(self):
 		return self.width * self.height
 
@@ -34,5 +36,5 @@ class Triangle(Rectangle):
 
 A = Rectangle(2, 4)
 B = Triangle(3, 4)
-print(A.get_area())
-print(B.get_area())
+print(A.__class__.__name__)
+print(B.__class__.__name__)
