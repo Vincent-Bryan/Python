@@ -1,4 +1,5 @@
 import sys
+import six
 
 g_code = {}
 class node(object):
@@ -52,6 +53,7 @@ def build_huff_tree(node_list):
 
 	return node_list[0]
 
+'''
 if __name__ == '__main__':
 	if len(sys.argv) != 2:
 		print("Please input a filename")
@@ -83,6 +85,55 @@ if __name__ == '__main__':
 	tmp.traverse('')
 	for x in g_code.keys():
 		print(x, chr(x), g_code[x])
-	# print(tmp.get_root().__class__.__name__)
-	# print(tmp.get_root().is_leaf())
 		
+'''
+
+def compress(input_file, output_file):
+	f = open(input_file, 'rb')
+	file_data = f.read()
+	file_size = f.tell()
+
+	char_freq = {}
+	for x in range(file_size):
+		tmp = file_data[x]
+		if tmp in char_freq.keys():
+			char_freq[tmp] = char_freq[tmp] + 1
+		else:
+			char_freq[tmp] = 1
+
+	for tmp in char_freq.keys():
+		print(chr(tmp),char_freq[tmp])
+
+	node_list = []
+	for x in char_freq.keys():
+		tmp = node(0, x, char_freq[x], None, None)
+		node_list.append(tmp)
+
+	length = len(char_freq.keys())
+	output = open(output_file, 'wb')
+
+	a4 = length & 255 		# 取低8位
+    length = length >> 8	# 左移8位
+    a3 = length & 255
+    length = length >> 8
+    a2 = length & 255
+    length = length >> 8
+    a1 = length & 255
+    output.write(six.int2byte(a1))
+    output.write(six.int2byte(a2))
+    output.write(six.int2byte(a3))
+    output.write(six.int2byte(a4))
+
+    tmp = build_huff_tree(node_list)
+	tmp.traverse('')
+
+	# content = ''
+	for i in range(file_size):
+		key = file_data[i]
+		# content = content + g_code[key]
+		output.write(g_code[key])
+
+	output.close()
+		
+		
+

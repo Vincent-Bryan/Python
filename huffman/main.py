@@ -92,8 +92,8 @@ if __name__ == '__main__':
 	char_freq = {}
 	for x in range(file_size):
 		# print(file_data[x])
-		# tmp = six.byte2int(file_data[x])
-		tmp = file_data[x]
+		tmp = six.byte2int(file_data[x])
+		# tmp = file_data[x]
 		if tmp in char_freq.keys():
 			char_freq[tmp] = char_freq[tmp] + 1
 		else:
