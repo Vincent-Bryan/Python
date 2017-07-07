@@ -1,1 +1,1 @@
-cmd界面的2048小游戏
+a simple 2048 game in cmd
