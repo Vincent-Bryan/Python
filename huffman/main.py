@@ -53,6 +53,13 @@ def build_huff_tree(node_list):
 
 	return node_list[0]
 
+def dfs(node):
+	if node.is_leaf:
+		print(chr(node.get_value()))
+	else:
+		dfs(node.get_left_child())
+		dfs(node.get_right_child())
+
 def compress(input_file, output_file):
 	f = open(input_file, 'rb')
 	file_data = f.read()
@@ -66,9 +73,6 @@ def compress(input_file, output_file):
 		else:
 			char_freq[tmp] = 1
 
-	for tmp in char_freq.keys():
-		print(chr(tmp),char_freq[tmp])
-
 	node_list = []
 	for x in char_freq.keys():
 		tmp = node(0, x, char_freq[x], None, None)
@@ -79,6 +83,7 @@ def compress(input_file, output_file):
 
 
 	# 写入长度
+	print("length: ",length)
 	a4 = length & 255 		# 取低8位
 	length = length >> 8	# 左移8位
 	a3 = length & 255
@@ -111,12 +116,17 @@ def compress(input_file, output_file):
 	print("writing char_freq done")
 
 	node_list = []
+	g_code.clear()
 	for x in char_freq.keys():
 		tmp = node(0, x, char_freq[x], None, None)
 		node_list.append(tmp)
 	tmp = build_huff_tree(node_list)
 	tmp.traverse('')
 
+	# print("leaf_ndoe_size: ", leaf_node_size)
+	for tmp in char_freq.keys():
+		print(chr(tmp),char_freq[tmp], g_code[tmp])
+		
 	# 将编码后的内容以二进制的形式写入
 	content = ''
 	for i in range(file_size):
@@ -184,22 +194,32 @@ def decompress(input_file, output_file):
 		j = j | a3
 		j = j << 8
 		j = j | a4
-
+		print(c, j)
 		char_freq[c] = j
 
 	# 重建哈夫曼树
 	node_list = []
+	g_code.clear()
 	for x in char_freq.keys():
 		tmp = node(0, x, char_freq[x], None, None)
 		node_list.append(tmp)
 	root_node = build_huff_tree(node_list)
 	root_node.traverse('')
 
+	print("leaf_ndoe_size: ", leaf_node_size)
+
+
+	dfs(root_node)
+	# dfs(root_node)
+
+	for tmp in char_freq.keys():
+		print(chr(tmp),char_freq[tmp], g_code[tmp])
+
 	output_ptr = open(output_file, 'wb')
 	content = ''
 	cur_node = root_node
-
 	for x in range(leaf_node_size*5+4, file_size):
+
 		c = file_data[x]
 		for i in range(8):
 			if c & 128:	
@@ -217,7 +237,7 @@ def decompress(input_file, output_file):
 					cur_node = cur_node.get_right_child()
 				else:
 					cur_node = cur_node.get_left_child()
-			content = content[1:]
+				content = content[1:]
 
 	remainder = content[-16:-8]
 	last_length = 0
