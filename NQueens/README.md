@@ -9,7 +9,7 @@
 
 ### 使用
 
-> python3  main.py <mode>  <n>
+> python3  main.py [mode] [n]
 >
 > e.g:
 >
